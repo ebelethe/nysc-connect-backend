@@ -1,7 +1,26 @@
 import express from "express";
 import routes from "./routes/index.js";
 import { errorHandler } from "./middlewares/errorHandler.middleware.js";
+import cors from "cors";
+
 const app =express();
+
+const allowedOrigins = (process.env.FRONTEND_URLS || "http://localhost:3000")
+  .split(",")
+  .map((url) => url.trim());
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 

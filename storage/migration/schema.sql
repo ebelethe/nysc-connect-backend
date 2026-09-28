@@ -253,3 +253,10 @@ ALTER TABLE landlords
     ADD COLUMN ppa VARCHAR(255) NULL;
     ADD COLUMN LGA VARCHAR(100) NULL;
     ADD COLUMN state VARCHAR(50) NULL;
+
+    ALTER TABLE corps_members
+  ADD COLUMN isSuspended BOOLEAN DEFAULT FALSE,
+  ADD COLUMN suspensionType ENUM('temporary', 'permanent') NULL,
+  ADD COLUMN suspendedUntil DATETIME NULL,
+  ADD COLUMN suspendedAt DATETIME NULL,
+  ADD COLUMN suspensionReason TEXT NULL; 
