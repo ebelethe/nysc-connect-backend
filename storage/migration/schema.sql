@@ -76,38 +76,6 @@ CREATE TABLE enquiries (
     FOREIGN KEY (corpsMemberId) REFERENCES corps_members(id) ON DELETE CASCADE
 );
 
---  posts (replaced - see communities/community_members below) 
--- CREATE TABLE posts (
---    id INT AUTO_INCREMENT PRIMARY KEY,
---  corpsMemberId INT NOT NULL,
---    content TEXT NOT NULL,
---    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
---    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
---    FOREIGN KEY (corpsMemberId) REFERENCES corps_members(id) ON DELETE CASCADE
---);
-
--- . comments (replaced)
---CREATE TABLE comments (
---    id INT AUTO_INCREMENT PRIMARY KEY,
---    postId INT NOT NULL,
---    corpsMemberId INT NOT NULL,
---    content TEXT NOT NULL,
---    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
---    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
---    FOREIGN KEY (postId) REFERENCES posts(id) ON DELETE CASCADE,
---    FOREIGN KEY (corpsMemberId) REFERENCES corps_members(id) ON DELETE CASCADE
---);
-
--- 9. likes (replaced)
---CREATE TABLE likes (
---    id INT AUTO_INCREMENT PRIMARY KEY,
---    postId INT NOT NULL,
---    corpsMemberId INT NOT NULL,
---    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
---    FOREIGN KEY (postId) REFERENCES posts(id) ON DELETE CASCADE,
---    FOREIGN KEY (corpsMemberId) REFERENCES corps_members(id) ON DELETE CASCADE,
---    UNIQUE (postId, corpsMemberId)
---);
 
 --  reports
 CREATE TABLE reports (
@@ -246,12 +214,12 @@ ALTER TABLE landlords
     ADD COLUMN profilePhotoUrl VARCHAR(255) NULL ;
 
     ALTER TABLE corps_members
-    ADD COLUMN profilePhotoUrl VARCHAR(255) NULL;
+    ADD COLUMN profilePhotoUrl VARCHAR(255) NULL,
     ADD COLUMN areasOfInterest VARCHAR(255) NULL,
-    ADD COLUMN batch VARCHAR(20) NULL;
-    ADD COLUMN stream VARCHAR(10) NULL;
-    ADD COLUMN ppa VARCHAR(255) NULL;
-    ADD COLUMN LGA VARCHAR(100) NULL;
+    ADD COLUMN batch VARCHAR(20) NULL,
+    ADD COLUMN stream VARCHAR(10) NULL,
+    ADD COLUMN ppa VARCHAR(255) NULL,
+    ADD COLUMN LGA VARCHAR(100) NULL,
     ADD COLUMN state VARCHAR(50) NULL;
 
     ALTER TABLE corps_members
