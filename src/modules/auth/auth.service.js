@@ -76,7 +76,9 @@ export const signupUser = async ({ fullName, email, phoneNumber, password, role,
 // ============================
 // Send OTP (used both for first-time sending and resending)
 // ============================
-export const sendOtp = async ({ channel, email, phoneNumber }) => {
+
+
+  export const sendOtp = async ({ channel, email, phoneNumber }) => {
   const user = channel === "email"
     ? await findUserByEmail(email)
     : await findUserByPhone(phoneNumber);
@@ -100,7 +102,7 @@ export const sendOtp = async ({ channel, email, phoneNumber }) => {
   await createOtp({ userId: user.id, code, purpose: "signup_verification", channel, expiresAt });
 
   return { userId: user.id, channel, code };
-};
+  }
 
 // ============================
 // Verify OTP (both otp verification— for email, also for phone)
@@ -124,7 +126,7 @@ export const verifySignupOtp = async ({ userId, code, channel }) => {
   // Check if both channels are now done — if so, fully verify the account
   const fullyVerified = await checkAndFinalizeVerification(userId);
 
-  return { verified: true, channel, fullyVerified };
+  return { verified: true, channel, fullyVerified, role: user.role };
 };
 
 // ============================

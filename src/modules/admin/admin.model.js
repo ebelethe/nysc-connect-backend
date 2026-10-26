@@ -5,13 +5,21 @@ export const createReport = async ({ reporterId, targetType, targetId, reason, m
   const [result] = await pool.query(
     `INSERT INTO reports (reporterId, targetType, targetId, reason, messageSnapshot)
      VALUES (?, ?, ?, ?, ?)`,
-    [reporterId, targetType, targetId, reason, messageSnapshot]
+     [reporterId, targetType, targetId, reason, messageSnapshot]
   );
   return result.insertId;
 };
 
-// Get all reports (default: pending ones, for the admin queue)
-export const getReports = async (status = "pending") => {
+// Get reports (default: pending ones, for the admin queue), optionally filtered by targetType
+export const getReports = async (status = "pending", targetType = null) => {
+  if (targetType) {
+    const [rows] = await pool.query(
+      `SELECT * FROM reports WHERE status = ? AND targetType = ? ORDER BY createdAt DESC`,
+      [status, targetType]
+    );
+    return rows;
+  }
+
   const [rows] = await pool.query(
     `SELECT * FROM reports WHERE status = ? ORDER BY createdAt DESC`,
     [status]

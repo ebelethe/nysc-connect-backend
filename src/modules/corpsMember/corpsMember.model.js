@@ -54,3 +54,30 @@ export const updateCorpsMemberPhoto = async (userId, profilePhotoUrl) => {
     [profilePhotoUrl, userId]
   );
 };
+
+// Admin suspends a corps member (temporary with a day count, or permanent)
+export const suspendCorpsMember = async (corpsMemberId, { suspensionType, durationDays, reason }) => {
+  const suspendedUntil =
+    suspensionType === "temporary"
+      ? new Date(Date.now() + durationDays * 24 * 60 * 60 * 1000)
+      : null;
+
+  await pool.query(
+    `UPDATE corps_members
+     SET isSuspended = TRUE, suspensionType = ?, suspendedUntil = ?, suspendedAt = NOW(), suspensionReason = ?
+     WHERE id = ?`,
+    [suspensionType, suspendedUntil, reason, corpsMemberId]
+  );
+};
+
+// Check if a corps member is currently suspended (live check, no cron needed)
+export const isCurrentlySuspended = async (corpsMemberId) => {
+  const [rows] = await pool.query(
+    `SELECT isSuspended, suspensionType, suspendedUntil FROM corps_members WHERE id = ?`,
+    [corpsMemberId]
+  );
+  const cm = rows[0];
+  if (!cm || !cm.isSuspended) return false;
+  if (cm.suspensionType === "permanent") return true;
+  return cm.suspendedUntil && new Date(cm.suspendedUntil) > new Date();
+};

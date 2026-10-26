@@ -1,4 +1,6 @@
-import { verifyLandlordIdentity, submitPersonalInfo } from "./landlord.service.js";
+import { verifyLandlordIdentity, 
+  submitPersonalInfo, 
+  getMyVerificationStatus } from "./landlord.service.js";
 import { personalInfoSchema } from "./landlord.validator.js";
 
 // POST /api/landlord/personal-info
@@ -46,5 +48,15 @@ export const verifyIdentity = async (req, res, next) => {
     return res.status(200).json({ success: true, ...result });
   } catch (err) {
     next(err); // passes to the global error handler
+  }
+};
+
+// get/api/landlord/verification-status
+export const verificationStatusController = async (req, res, next) => {
+  try {
+    const result = await getMyVerificationStatus(req.user.userId);
+    return res.status(200).json({ success: true, message: "Verification status fetched", data: result });
+  } catch (err) {
+    next(err);
   }
 };

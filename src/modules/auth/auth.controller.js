@@ -54,13 +54,15 @@ export const verifyOtp = async (req, res) => {
 
     const result = await verifySignupOtp({ userId, code, channel });
 
-    return res.status(200).json({
-      success: true,
-      message: result.fullyVerified
-        ? "Account fully verified!"
-        : `${channel} verified. Please verify your remaining channel.`,
-      data: result,
-    });
+    let message = `${channel} verified. Please verify your remaining channel.`;
+    if (result.fullyVerified) {
+      message =
+        result.role === "landlord"
+          ? "Account verified! As a landlord, please complete identity verification (ID + selfie) before you can list properties."
+          : "Account fully verified!";
+    }
+
+    return res.status(200).json({ success: true, message, data: result });
   } catch (err) {
     return res.status(400).json({ success: false, message: err.message });
   }

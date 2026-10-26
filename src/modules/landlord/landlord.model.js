@@ -49,9 +49,21 @@ export const submitLandlordVerification = async (userId, { idDocumentUrl, selfie
 };
 
 // Admin updates verification outcome (verified or rejected)
-export const updateVerificationStatus = async (landlordId, status) => {
+export const updateVerificationStatus = async (landlordId, status, rejectionReason = null) => {
   await pool.query(
-    `UPDATE landlords SET verificationStatus = ? WHERE id = ?`,
-    [status, landlordId]
+    `UPDATE landlords SET verificationStatus = ?, rejectionReason = ? WHERE id = ?`,
+    [status, rejectionReason, landlordId]
   );
+};
+
+// Landlord pending verification review
+export const getPendingLandlords = async () => {
+  const [rows] = await pool.query(
+    `SELECT l.*, u.fullName, u.email, u.phoneNumber
+     FROM landlords l
+     JOIN users u ON u.id = l.userId
+     WHERE l.verificationStatus = 'pending'
+     ORDER BY l.createdAt ASC`
+  );
+  return rows;
 };

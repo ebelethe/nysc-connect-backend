@@ -1,9 +1,10 @@
 
 import express from "express";
-import { verifyIdentity, personalInfo} from "./landlord.controller.js";
+
 import { protect } from "../../middlewares/auth.middleware.js";
 import { requireRole } from "../../middlewares/role.middleware.js";
-import { upload } from "../../config/uploads/upload.js";
+import { upload } from "../../config/cloudinary.js";
+import { verifyIdentity, personalInfo, verificationStatusController} from "./landlord.controller.js";
 
 const router = express.Router();
 
@@ -25,5 +26,7 @@ router.post(
   ]),
   verifyIdentity
 );
+
+router.get("/verification-status", protect, requireRole("landlord"), verificationStatusController);
 
 export default router;
