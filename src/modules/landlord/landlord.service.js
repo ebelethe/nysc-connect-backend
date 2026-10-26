@@ -25,3 +25,13 @@ export const verifyLandlordIdentity = async ({ userId, idDocumentUrl, selfieUrl 
 
   return { success: true, message: "Documents submitted. Your account is under review." };
 };
+
+export const getMyVerificationStatus = async (userId) => {
+  const landlord = await findLandlordByUserId(userId);
+  if (!landlord) throw new Error("Landlord profile not found");
+
+  return {
+    verificationStatus: landlord.verificationStatus,
+    rejectionReason: landlord.rejectionReason || null,
+  };
+};

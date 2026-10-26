@@ -1,5 +1,4 @@
 
-
 --  users 
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -228,3 +227,8 @@ ALTER TABLE landlords
   ADD COLUMN suspendedUntil DATETIME NULL,
   ADD COLUMN suspendedAt DATETIME NULL,
   ADD COLUMN suspensionReason TEXT NULL; 
+
+ALTER TABLE corps_members
+  ADD COLUMN lastActiveAt DATETIME NULL;
+
+  ALTER TABLE landlords ADD COLUMN rejectionReason TEXT NULL;
