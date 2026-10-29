@@ -24,7 +24,7 @@ export const reviewLandlordVerification = async ({ landlordId, decision, rejecti
   if (!landlord) throw new Error("Landlord not found");
 
   await updateVerificationStatus(landlordId, decision, rejectionReason || null);
-  return { success: true, message: `Landlord i verification ${decision}` };
+  return { success: true, message: `Landlord identity verification ${decision}` };
 };
 
 export const listPendingReports = async (targetType) => {

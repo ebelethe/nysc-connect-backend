@@ -232,3 +232,5 @@ ALTER TABLE corps_members
   ADD COLUMN lastActiveAt DATETIME NULL;
 
   ALTER TABLE landlords ADD COLUMN rejectionReason TEXT NULL;
+   ALTER TABLE landlords CHANGE COLUMN verificationStatus idVerificationStatus ENUM('pending', 'verified', 'rejected') NOT NULL DEFAULT 'pending';
+   ALTER TABLE landlords MODIDFY COLUMN idVerificationStatus ENUM( 'not_submitted', 'pending_review', 'verified', 'rejected') NOT NULL DEFAULT 'not_submitted';

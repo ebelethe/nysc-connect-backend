@@ -18,7 +18,7 @@ import {
   blockToken
 } from "./auth.model.js";
 import { createCorpsMember, findCorpsMemberByCallUpNumber } from "../corpsMember/corpsMember.model.js";
-import { createLandlord } from "../landlord/landlord.model.js";
+import { createLandlord, findLandlordByUserId} from "../landlord/landlord.model.js";
 
 // Generates a random 6-digit code, e.g. "483920"
 const generateOtpCode = () => {
@@ -119,13 +119,19 @@ export const verifySignupOtp = async ({ userId, code, channel }) => {
   // Mark the specific channel as verified
   if (channel === "email") {
     await markEmailVerified(userId);
-  } else if (channel === "sms") {
+  } else if (channel === "sms") { 
     await markPhoneVerified(userId);
   }
 
   // Check if both channels are now done — if so, fully verify the account
-  const fullyVerified = await checkAndFinalizeVerification(userId);
-
+  let fullyVerified = await checkAndFinalizeVerification(userId);
+ const user=await findUserById(userId);
+  
+ //for landlords, OTP completion alone is not "fully verified- ID check matters too
+ if (user.role === "landlord" && fullyVerified ) {
+  const landlord = await findLandlordByUserId(userId);
+  fullyVerified = landlord?.idVerificationStatus === "verified";
+ }
   return { verified: true, channel, fullyVerified, role: user.role };
 };
 
@@ -139,11 +145,19 @@ export const getVerificationStatus = async (userId) => {
     throw new Error("User not found");
   }
 
-  return {
+  const result = {
     emailVerified: !!user.emailVerified,
     phoneVerified: !!user.phoneVerified,
     fullyVerified: !!user.isVerified,
+    role: user.role,
   };
+  //for landlords, fullyVerified must also depend on admins ID verification decision
+  if (user.role === "landlord" && result.fullyVerified){
+    const landlord =await findLandlordByUserId(userId);
+     result.idVerificationStatus =landlord ? landlord.idVerificationStatus : "not_submitted";
+     result.fullyVerified = landlord ?.idVerificationStatus ==="verified";
+  }
+  return result
 };
 
 //====================

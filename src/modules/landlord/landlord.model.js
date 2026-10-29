@@ -42,7 +42,7 @@ export const updateLandlordPersonalInfo = async (userId, { state, LGA, residenti
 export const submitLandlordVerification = async (userId, { idDocumentUrl, selfieUrl }) => {
   await pool.query(
     `UPDATE landlords
-     SET idDocumentUrl = ?, selfieUrl = ?, verificationStatus = 'pending'
+     SET idDocumentUrl = ?, selfieUrl = ?, idVerificationStatus = 'pending'
      WHERE userId = ?`,
     [idDocumentUrl, selfieUrl, userId]
   );
@@ -51,7 +51,7 @@ export const submitLandlordVerification = async (userId, { idDocumentUrl, selfie
 // Admin updates verification outcome (verified or rejected)
 export const updateVerificationStatus = async (landlordId, status, rejectionReason = null) => {
   await pool.query(
-    `UPDATE landlords SET verificationStatus = ?, rejectionReason = ? WHERE id = ?`,
+    `UPDATE landlords SET idVerificationStatus = ?, rejectionReason = ? WHERE id = ?`,
     [status, rejectionReason, landlordId]
   );
 };
@@ -62,7 +62,7 @@ export const getPendingLandlords = async () => {
     `SELECT l.*, u.fullName, u.email, u.phoneNumber
      FROM landlords l
      JOIN users u ON u.id = l.userId
-     WHERE l.verificationStatus = 'pending'
+     WHERE l.idVerificationStatus = 'pending'
      ORDER BY l.createdAt ASC`
   );
   return rows;

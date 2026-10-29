@@ -29,9 +29,11 @@ export const verifyLandlordIdentity = async ({ userId, idDocumentUrl, selfieUrl 
 export const getMyVerificationStatus = async (userId) => {
   const landlord = await findLandlordByUserId(userId);
   if (!landlord) throw new Error("Landlord profile not found");
+      
+    const result ={ idVerificationStatus: landlord.idVerificationStatus };
 
-  return {
-    verificationStatus: landlord.verificationStatus,
-    rejectionReason: landlord.rejectionReason || null,
+    if (landlord.idVerificationStatus === "rejected"){
+      result.rejectionReason =landlord.rejectionReason;
+    }
+  return result;
   };
-};
