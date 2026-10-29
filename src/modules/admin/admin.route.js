@@ -10,8 +10,8 @@ import { createCommunityController,
 const router = express.Router();
 
 router.post("/communities", protect, requireRole("admin"), createCommunityController);
-router.get("/landlords/pending", protect, requireRole("admin"), getPendingLandlordsController);
-router.patch("/landlords/:landlordId/review", protect, requireRole("admin"), reviewLandlord);
+router.get("/landlords/pending",  getPendingLandlordsController);
+router.patch("/landlords/:landlordId/review",  reviewLandlord);
 router.get("reports", protect, requireRole("admin"), getPendingReports)
 
 export default router;

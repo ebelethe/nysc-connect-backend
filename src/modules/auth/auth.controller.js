@@ -54,7 +54,7 @@ export const verifyOtp = async (req, res) => {
 
     const result = await verifySignupOtp({ userId, code, channel });
 
-    let message = `${channel} verified. Please verify your remaining channel.`;
+    let message = `${channel} verified. As a landlord, please complete identity verification (ID + selfie) before you can list a property`;
     if (result.fullyVerified) {
       message =
         result.role === "landlord"
@@ -75,14 +75,30 @@ export const verificationStatus = async (req, res) => {
     const status = await getVerificationStatus(userId);
 
     let message;
-    if (status.fullyVerified) {
-      message = "Account is fully verified.";
-    } else if (status.emailVerified && !status.phoneVerified) {
-      message = "Email already verified. Please verify your phone number.";
-    } else if (!status.emailVerified && status.phoneVerified) {
-      message = "Phone number already verified. Please verify your email.";
+
+    if (!status.emailVerified || !status.phoneVerified) {
+      // OTP verification not yet complete — existing behavior unchanged
+      if (status.emailVerified && !status.phoneVerified) {
+        message = "Email already verified. Please verify your phone number.";
+      } else if (!status.emailVerified && status.phoneVerified) {
+        message = "Phone already verified. Please verify your email.";
+      } else {
+        message = "Please verify your email and phone number.";
+      }
+    } else if (status.role === "landlord") {
+      // OTP done, now check ID verification stage
+      if (status.idVerificationStatus === "verified") {
+        message = "Account is fully verified.";
+      } else if (status.idVerificationStatus === "rejected") {
+        message = "Your identity verification was rejected. please check the reason on your id verification dashborad";
+      } else if (status.idVerificationStatus === "pending") {
+        message = "Your identity documents are under review. we'll notify you once an admin has checked them.";
+      } else {
+        message = "Please upload your ID and complete identity verification.";
+      }
     } else {
-      message = "Please verify your email and phone number.";
+      // corps_member — OTP completion is enough
+      message = "Account is fully verified.";
     }
 
     return res.status(200).json({ success: true, message, data: status });
