@@ -5,7 +5,7 @@ import cors from "cors";
 
 const app =express();
 
-const allowedOrigins = (process.env.FRONTEND_URLS || "http://localhost:3000")
+const allowedOrigins = (process.env.FRONTEND_URLS || "http://localhost:5173")
   .split(",")
   .map((url) => url.trim());
 
